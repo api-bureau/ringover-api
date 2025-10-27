@@ -6,8 +6,17 @@ namespace ApiBureau.Ringover.Api.Interfaces;
 public interface IRingoverClient
 {
     /// <summary>
-    /// Access to company-related operations.
+    /// Access to call-related operations.
     /// </summary>
-    CompanyEndpoint Companies { get; }
-    PayrollEndpoint Payrolls { get; }
+    CallEndpoint Calls { get; }
+
+    /// <summary>
+    /// Gets the endpoint for managing user-related operations.
+    /// </summary>
+    UserEndpoint Users { get; }
+
+    /// <summary>
+    /// Gets the endpoint for managing contact information.
+    /// </summary>
+    ContactEndpoint Contacts { get; }
 }

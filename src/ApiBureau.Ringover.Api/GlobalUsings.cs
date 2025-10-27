@@ -3,4 +3,8 @@ global using ApiBureau.Ringover.Api.Dtos;
 global using ApiBureau.Ringover.Api.Endpoints;
 global using ApiBureau.Ringover.Api.Http;
 global using ApiBureau.Ringover.Api.Interfaces;
+global using ApiBureau.Ringover.Api.Internals;
+global using ApiBureau.Ringover.Api.Queries;
+global using ApiBureau.Ringover.Api.Responses;
 global using Microsoft.Extensions.Configuration;
+global using System.Text.Json.Serialization;

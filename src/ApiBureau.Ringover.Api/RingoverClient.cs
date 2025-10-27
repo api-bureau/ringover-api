@@ -6,10 +6,11 @@ namespace ApiBureau.Ringover.Api;
 public class RingoverClient : IRingoverClient
 {
     /// <summary>
-    /// Provides operations related to company resources.
+    /// Operations related to call records and call history.
     /// </summary>
-    public CompanyEndpoint Companies { get; }
-    public PayrollEndpoint Payrolls { get; }
+    public CallEndpoint Calls { get; }
+    public ContactEndpoint Contacts { get; }
+    public UserEndpoint Users { get; }
 
     /// <summary>
     /// Creates a new <see cref="RingoverClient"/> instance.
@@ -17,7 +18,8 @@ public class RingoverClient : IRingoverClient
     /// <param name="apiConnection">The configured Ringover HTTP connection.</param>
     public RingoverClient(RingoverHttpClient apiConnection)
     {
-        Companies = new CompanyEndpoint(apiConnection);
-        Payrolls = new PayrollEndpoint(apiConnection);
+        Calls = new CallEndpoint(apiConnection);
+        Contacts = new ContactEndpoint(apiConnection);
+        Users = new UserEndpoint(apiConnection);
     }
 }
