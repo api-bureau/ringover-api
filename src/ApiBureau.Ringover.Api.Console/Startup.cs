@@ -1,10 +1,10 @@
-using ApiBureau.Devyce.Api.Console.Services;
-using ApiBureau.Devyce.Api.Extensions;
+using ApiBureau.Ringover.Api.Console.Services;
+using ApiBureau.Ringover.Api.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace ApiBureau.Devyce.Api.Console;
+namespace ApiBureau.Ringover.Api.Console;
 
 public class Startup
 {
@@ -27,7 +27,7 @@ public class Startup
             configure.AddConfiguration(Configuration.GetSection("Logging"));
             configure.AddConsole();
         });
-        services.AddDevyce(Configuration);
+        services.AddRingover(Configuration);
         services.AddScoped<DataService>();
     }
 }

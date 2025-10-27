@@ -1,16 +1,16 @@
-using ApiBureau.Devyce.Api.Interfaces;
-using ApiBureau.Devyce.Api.Queries;
+using ApiBureau.Ringover.Api.Interfaces;
+using ApiBureau.Ringover.Api.Queries;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
-namespace ApiBureau.Devyce.Api.Console.Services;
+namespace ApiBureau.Ringover.Api.Console.Services;
 
 public class DataService
 {
-    private readonly IDevyceClient _client;
+    private readonly IRingoverClient _client;
     private readonly ILogger<DataService> _logger;
 
-    public DataService(IDevyceClient client, ILogger<DataService> logger)
+    public DataService(IRingoverClient client, ILogger<DataService> logger)
     {
         _client = client;
         _logger = logger;

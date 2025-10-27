@@ -1,5 +1,5 @@
-using ApiBureau.Devyce.Api.Console;
-using ApiBureau.Devyce.Api.Console.Services;
+using ApiBureau.Ringover.Api.Console;
+using ApiBureau.Ringover.Api.Console.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();

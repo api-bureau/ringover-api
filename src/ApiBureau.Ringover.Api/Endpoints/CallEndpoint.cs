@@ -23,7 +23,7 @@ public class CallEndpoint : BaseEndpoint
         var response = await HttpClient.GetAsync<CallResponse>(queryParams,
             cancellationToken);
 
-        return response?.Items ?? [];
+        return response?.CallList ?? [];
     }
 
     /// <summary>

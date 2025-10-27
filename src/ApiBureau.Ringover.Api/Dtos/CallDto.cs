@@ -9,29 +9,40 @@ public class CallDto
     public required string CallId { get; set; }
 
     public string? Type { get; set; } = null!;
-
-
-    public string CallerId { get; set; } = null!;
-    public string CalledNumber { get; set; } = null!;
     public string Direction { get; set; } = null!;
-    public DateTime StartTimeUtc { get; set; }
-    public DateTime EndTimeUtc { get; set; }
-    public int Duration { get; set; }
-    public string Status { get; set; } = null!;
-    public DateTime UpdateTimeUtc { get; set; }
-    public string? RecordingUrl { get; set; }
-    public string? PlatformLink { get; set; }
-    public string? CallNotes { get; set; }
-    public string? CallTag { get; set; }
 
-    public int GetNumericCrmId()
-    {
-        //if (Contact is null) return 0;
+    [JsonPropertyName("from_number")]
+    public required string FromNumber { get; set; }
 
-        //_ = int.TryParse(Contact.CrmObjectInstanceId, out var crmId);
+    [JsonPropertyName("to_number")]
+    public required string ToNumber { get; set; }
 
-        int crmId = 0;
+    [JsonPropertyName("start_time")]
+    public DateTime StartTime { get; set; }
 
-        return crmId;
-    }
+    [JsonPropertyName("end_time")]
+    public DateTime EndTime { get; set; }
+
+    [JsonPropertyName("total_duration")]
+    public int TotalDuration { get; set; }
+
+    [JsonPropertyName("last_state")]
+    public string LastState { get; set; } = null!;
+
+    //public DateTime UpdateTimeUtc { get; set; }
+    //public string? RecordingUrl { get; set; }
+    //public string? PlatformLink { get; set; }
+    public string? Note { get; set; }
+    //public string? CallTag { get; set; }
+
+    //public int GetNumericCrmId()
+    //{
+    //    //if (Contact is null) return 0;
+
+    //    //_ = int.TryParse(Contact.CrmObjectInstanceId, out var crmId);
+
+    //    int crmId = 0;
+
+    //    return crmId;
+    //}
 }
