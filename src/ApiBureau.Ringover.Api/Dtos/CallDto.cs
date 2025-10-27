@@ -30,9 +30,16 @@ public class CallDto
     public string LastState { get; set; } = null!;
 
     //public DateTime UpdateTimeUtc { get; set; }
-    //public string? RecordingUrl { get; set; }
+
+    /// <summary>
+    /// Recording URL
+    /// </summary>
+    public string? Record { get; set; }
     //public string? PlatformLink { get; set; }
     public string? Note { get; set; }
+
+    public UserDto? User { get; set; }
+
     //public string? CallTag { get; set; }
 
     //public int GetNumericCrmId()
