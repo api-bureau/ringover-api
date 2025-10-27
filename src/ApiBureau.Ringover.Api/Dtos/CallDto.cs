@@ -8,7 +8,7 @@ public class CallDto
     [JsonPropertyName("call_id")]
     public required string CallId { get; set; }
 
-    public string? Type { get; set; } = null!;
+    public string? Type { get; set; }
     public string Direction { get; set; } = null!;
 
     [JsonPropertyName("from_number")]
@@ -27,7 +27,7 @@ public class CallDto
     public int TotalDuration { get; set; }
 
     [JsonPropertyName("last_state")]
-    public string LastState { get; set; } = null!;
+    public string? LastState { get; set; }
 
     //public DateTime UpdateTimeUtc { get; set; }
 
