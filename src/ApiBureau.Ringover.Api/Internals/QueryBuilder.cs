@@ -10,7 +10,7 @@ internal static class QueryBuilder
         var queryParams = new Dictionary<string, string?>();
         if (query.StartDate.HasValue)
         {
-            queryParams["sart_date"] = query.StartDate.Value.ToString("o", CultureInfo.InvariantCulture);
+            queryParams["start_date"] = query.StartDate.Value.ToString("o", CultureInfo.InvariantCulture);
         }
 
         if (query.EndDate.HasValue)
