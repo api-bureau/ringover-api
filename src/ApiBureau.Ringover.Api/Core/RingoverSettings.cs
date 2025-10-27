@@ -23,4 +23,10 @@ public class RingoverSettings
     /// </summary>
     [Required(ErrorMessage = "ApiKey is required.")]
     public required string ApiKey { get; set; }
+
+    /// <summary>
+    /// The API key used to authenticate requests to Ringover.
+    /// </summary>
+    [Required(ErrorMessage = "Version is required.")]
+    public required string Version { get; set; }
 }

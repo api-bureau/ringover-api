@@ -81,7 +81,7 @@ public class RingoverHttpClient
     {
         try
         {
-            var relative = Combine(ApiUrlPrefix, url);
+            var relative = Combine($"/{_settings.Version}", url);
 
             // Fast path for no headers: use convenience extension
             if (headers == null || headers.Count == 0)
