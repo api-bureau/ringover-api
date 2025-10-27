@@ -42,14 +42,14 @@ public class CallDto
 
     //public string? CallTag { get; set; }
 
-    //public int GetNumericCrmId()
-    //{
-    //    //if (Contact is null) return 0;
+    public int GetNumericCrmId()
+    {
+        //if (Contact is null) return 0;
 
-    //    //_ = int.TryParse(Contact.CrmObjectInstanceId, out var crmId);
+        //_ = int.TryParse(Contact.CrmObjectInstanceId, out var crmId);
 
-    //    int crmId = 0;
+        int crmId = 0;
 
-    //    return crmId;
-    //}
+        return crmId;
+    }
 }
