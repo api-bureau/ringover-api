@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Polly;
-using System.Net.Http.Headers;
 
 namespace ApiBureau.Ringover.Api.Extensions;
 
@@ -29,7 +28,8 @@ public static class ServiceExtensions
             {
                 var settings = sp.GetRequiredService<IOptions<RingoverSettings>>().Value;
                 client.BaseAddress = new Uri(settings.BaseUrl);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{settings.ApiKey}:")));
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{settings.ApiKey}:")));
+                client.DefaultRequestHeaders.Add("Authorization", settings.ApiKey);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("ApiBureau.Ringover.Api/1.0");
             })
             .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(20)))
