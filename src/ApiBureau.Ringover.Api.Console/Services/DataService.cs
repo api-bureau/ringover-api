@@ -9,6 +9,7 @@ public class DataService
 {
     private readonly IRingoverClient _client;
     private readonly ILogger<DataService> _logger;
+    private readonly JsonSerializerOptions _indentedJsonOptions = new() { WriteIndented = true };
 
     public DataService(IRingoverClient client, ILogger<DataService> logger)
     {
@@ -18,14 +19,22 @@ public class DataService
 
     public async Task RunAsync()
     {
-        var callQuery = new CallQuery(DateTime.Now.AddDays(-1), DateTime.Now);
+        var startDate = DateTime.Now.AddDays(-3);
+
+        var callQuery = new CallQuery(startDate, DateTime.Now);
 
         var result = await _client.Calls.GetAsync(callQuery);
 
-        _logger.LogInformation(JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true }));
+        _logger.LogInformation(JsonSerializer.Serialize(result, _indentedJsonOptions));
 
         var users = await _client.Users.GetAsync(default);
 
-        _logger.LogInformation(JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true }));
+        _logger.LogInformation(JsonSerializer.Serialize(users, _indentedJsonOptions));
+
+        var transcriptQuery = new TranscriptQuery(startDate, DateTime.Now);
+
+        var transcripts = await _client.Transcripts.GetAsync(transcriptQuery);
+
+        _logger.LogInformation(JsonSerializer.Serialize(transcripts, _indentedJsonOptions));
     }
 }

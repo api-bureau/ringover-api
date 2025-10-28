@@ -15,30 +15,13 @@ public class CallEndpoint : BaseEndpoint
     /// Retrieves calls for a specific organization with pagination support.
     /// </summary>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    public async Task<List<CallDto>> GetAsync(CallQuery callQuery,
+    public async Task<List<CallDto>> GetAsync(CallQuery query,
         CancellationToken cancellationToken = default)
     {
-        var queryParams = QueryBuilder.BuildCallQuery(callQuery);
+        var queryParams = QueryBuilder.BuildCallQuery(query);
 
-        var response = await HttpClient.GetAsync<CallResponse>(queryParams,
-            cancellationToken);
+        var response = await HttpClient.GetAsync<CallResponse>(queryParams, cancellationToken);
 
         return response?.CallList ?? [];
-    }
-
-    /// <summary>
-    /// Retrieves the transcription for a specific call.
-    /// </summary>
-    /// <param name="organizationId">The organization identifier.</param>
-    /// <param name="callId">The call identifier.</param>
-    /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    public async Task<CallTranscriptionDto?> GetCallTranscriptionAsync(
-        string organizationId,
-        string callId,
-        CancellationToken cancellationToken = default)
-    {
-        return await HttpClient.GetAsync<CallTranscriptionDto>(
-            $"/Organizations/{organizationId}/CallTranscriptions/{callId}",
-            cancellationToken);
     }
 }

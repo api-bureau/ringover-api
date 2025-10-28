@@ -1,13 +1,7 @@
 namespace ApiBureau.Ringover.Api.Dtos;
 
-public class CallDto
+public class CallDto : CallIdDto
 {
-    [JsonPropertyName("cdr_id")]
-    public required int CdrId { get; set; }
-
-    [JsonPropertyName("call_id")]
-    public required string CallId { get; set; }
-
     public string? Type { get; set; }
     public string Direction { get; set; } = null!;
 

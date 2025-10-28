@@ -19,4 +19,6 @@ public interface IRingoverClient
     /// Gets the endpoint for managing contact information.
     /// </summary>
     ContactEndpoint Contacts { get; }
+
+    TranscriptEndpoint Transcripts { get; }
 }

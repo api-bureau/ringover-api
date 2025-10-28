@@ -1,10 +1,7 @@
 namespace ApiBureau.Ringover.Api.Responses;
 
-public class CallResponse
+public class CallResponse : UserIdDto
 {
-    [JsonPropertyName("user_id")]
-    public required long UserId { get; set; }
-
     [JsonPropertyName("call_list")]
     public List<CallDto> CallList { get; set; } = [];
 }

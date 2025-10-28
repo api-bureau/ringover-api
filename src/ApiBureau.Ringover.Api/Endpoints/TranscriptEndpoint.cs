@@ -11,12 +11,12 @@ public class TranscriptEndpoint : BaseEndpoint
     /// <summary>
     /// Retrieves all users for a specific organization.
     /// </summary>
-    public async Task<List<UserDto>> GetAsync(CancellationToken cancellationToken)
+    public async Task<List<TranscriptionDto>> GetAsync(TranscriptQuery query, CancellationToken cancellationToken = default)
     {
-        var result = await HttpClient.GetAsync<UserResponse>(
-            $"/users",
-            cancellationToken);
+        var queryParams = QueryBuilder.BuildTranscriptQuery(query);
 
-        return result?.List ?? [];
+        var items = await HttpClient.GetAsync<List<TranscriptionDto>>(queryParams, cancellationToken);
+
+        return items ?? [];
     }
 }

@@ -11,6 +11,7 @@ public class RingoverClient : IRingoverClient
     public CallEndpoint Calls { get; }
     public ContactEndpoint Contacts { get; }
     public UserEndpoint Users { get; }
+    public TranscriptEndpoint Transcripts { get; }
 
     /// <summary>
     /// Creates a new <see cref="RingoverClient"/> instance.
@@ -21,5 +22,6 @@ public class RingoverClient : IRingoverClient
         Calls = new CallEndpoint(apiConnection);
         Contacts = new ContactEndpoint(apiConnection);
         Users = new UserEndpoint(apiConnection);
+        Transcripts = new TranscriptEndpoint(apiConnection);
     }
 }

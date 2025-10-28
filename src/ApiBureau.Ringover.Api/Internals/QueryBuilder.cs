@@ -25,4 +25,25 @@ internal static class QueryBuilder
 
         return QueryHelpers.AddQueryString($"/calls", queryParams);
     }
+
+    internal static string BuildTranscriptQuery(TranscriptQuery query)
+    {
+        var queryParams = new Dictionary<string, string?>();
+        if (query.CreatedFrom.HasValue)
+        {
+            queryParams["created_from"] = query.CreatedFrom.Value.ToString("o", CultureInfo.InvariantCulture);
+        }
+
+        if (query.CreatedTo.HasValue)
+        {
+            queryParams["created_to"] = query.CreatedTo.Value.ToString("o", CultureInfo.InvariantCulture);
+        }
+
+        if (query.Limit.HasValue)
+        {
+            queryParams["limit_count"] = query.Limit.Value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        return QueryHelpers.AddQueryString($"/transcriptions", queryParams);
+    }
 }
