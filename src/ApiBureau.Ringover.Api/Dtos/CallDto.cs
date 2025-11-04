@@ -33,17 +33,18 @@ public class CallDto : CallIdDto
     public string? Note { get; set; }
 
     public UserDto? User { get; set; }
+    public ContactDto? Contact { get; set; }
 
     //public string? CallTag { get; set; }
 
     public int GetNumericCrmId()
     {
-        //if (Contact is null) return 0;
+        if (Contact is null) return 0;
 
-        //_ = int.TryParse(Contact.CrmObjectInstanceId, out var crmId);
-
-        int crmId = 0;
+        _ = int.TryParse(Contact.SocialServiceId?.Replace("CD", ""), out var crmId);
 
         return crmId;
     }
+
+    public string? GetName() => Contact?.ConcatName;
 }
