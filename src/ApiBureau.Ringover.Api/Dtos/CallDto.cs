@@ -47,4 +47,8 @@ public class CallDto : CallIdDto
     }
 
     public string? GetName() => Contact?.ConcatName;
+
+    public string? GetBullhornEntityType() => Contact?.SocialProfileUrl?.Contains("ClientContact") == true ?
+        "ClientContact" :
+        (Contact?.SocialProfileUrl?.Contains("Candidate") == true ? "Candidate" : null);
 }
