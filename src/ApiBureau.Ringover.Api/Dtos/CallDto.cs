@@ -41,7 +41,7 @@ public class CallDto : CallIdDto
     {
         if (Contact is null) return 0;
 
-        _ = int.TryParse(Contact.SocialServiceId?.Replace("CD", ""), out var crmId);
+        _ = int.TryParse(Contact.SocialServiceId?.Replace("CD", "").Replace("CC", ""), out var crmId);
 
         return crmId;
     }
