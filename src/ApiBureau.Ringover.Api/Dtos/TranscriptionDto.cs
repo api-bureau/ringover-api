@@ -7,7 +7,6 @@ public class TranscriptionDto
     [JsonPropertyName("call_id")]
     public required string CallId { get; set; }
 
-    public string Transcript { get; set; } = null!;
     public string? Provider { get; set; }
 
     [JsonPropertyName("user_id")]
