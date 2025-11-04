@@ -27,11 +27,18 @@ public class TranscriptionDataDto
 {
     public List<SpeechDto> Speeches { get; set; } = [];
     public string? Text { get; set; }
+
+    public string? GetSpeechText()
+    {
+        if (Speeches.Count == 0) return null;
+
+        return string.Join("\n", Speeches.Where(s => !string.IsNullOrEmpty(s.Text)).Select(s => $"Channel {s.ChannelId}: {s.Text}"));
+    }
 }
 
 public class SpeechDto
 {
-    public int ChanneldId { get; set; }
+    public int ChannelId { get; set; }
     public float Start { get; set; }
     public float End { get; set; }
     public float Duration { get; set; }
