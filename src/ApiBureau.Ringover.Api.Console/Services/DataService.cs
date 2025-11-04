@@ -19,7 +19,7 @@ public class DataService
 
     public async Task RunAsync()
     {
-        var startDate = DateTime.Now.AddDays(-3);
+        var startDate = DateTime.Now.AddMinutes(-120);
 
         var callQuery = new CallQuery(startDate, DateTime.Now);
 
@@ -29,12 +29,19 @@ public class DataService
 
         var users = await _client.Users.GetAsync(default);
 
-        _logger.LogInformation(JsonSerializer.Serialize(users, _indentedJsonOptions));
+        _logger.LogInformation("Users: {users}", JsonSerializer.Serialize(users, _indentedJsonOptions));
 
         var transcriptQuery = new TranscriptQuery(startDate, DateTime.Now);
 
         var transcripts = await _client.Transcripts.GetAsync(transcriptQuery);
 
         _logger.LogInformation(JsonSerializer.Serialize(transcripts, _indentedJsonOptions));
+
+        if (transcripts.Count > 0)
+        {
+            _logger.LogInformation("Transcript: {example}", transcripts[0].TranscriptionData?.GetSpeechText());
+        }
+
+        await Task.Delay(100);
     }
 }
