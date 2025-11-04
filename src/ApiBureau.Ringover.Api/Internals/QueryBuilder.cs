@@ -20,7 +20,12 @@ internal static class QueryBuilder
 
         if (query.Limit.HasValue)
         {
-            queryParams["limit"] = query.Limit.Value.ToString(CultureInfo.InvariantCulture);
+            queryParams["limit_count"] = query.Limit.Value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        if (query.Offset.HasValue)
+        {
+            queryParams["limit_offset"] = query.Offset.Value.ToString(CultureInfo.InvariantCulture);
         }
 
         return QueryHelpers.AddQueryString($"/calls", queryParams);
@@ -42,6 +47,11 @@ internal static class QueryBuilder
         if (query.Limit.HasValue)
         {
             queryParams["limit_count"] = query.Limit.Value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        if (query.Offset.HasValue)
+        {
+            queryParams["limit_offset"] = query.Offset.Value.ToString(CultureInfo.InvariantCulture);
         }
 
         return QueryHelpers.AddQueryString($"/transcriptions", queryParams);
