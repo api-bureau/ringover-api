@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -13,11 +14,10 @@ namespace ApiBureau.Ringover.Api.Http;
 /// - Assumes the underlying <see cref="HttpClient"/> is configured via DI (BaseAddress and Basic auth).
 /// - Provides minimal JSON-based GET helper with optional cancellation support.
 /// - Centralizes error logging for deserialization failures.
+/// - Handles 204 No Content responses gracefully by returning default values.
 /// </remarks>
 public class RingoverHttpClient
 {
-    private const string ApiUrlPrefix = "/api";
-
     private static class KnownHeaderNames
     {
         public const string CompanyId = "companyId";
@@ -56,7 +56,7 @@ public class RingoverHttpClient
     /// </summary>
     /// <typeparam name="T">The expected response type.</typeparam>
     /// <param name="url">Relative resource path under the Ringover API prefix.</param>
-    /// <returns>The deserialized response instance, or <c>null</c> if deserialization fails.</returns>
+    /// <returns>The deserialized response instance, or <c>null</c> if deserialization fails or 204 No Content is returned.</returns>
     public Task<T?> GetAsync<T>(string url)
         => GetAsync<T>(url, CancellationToken.None);
 
@@ -66,67 +66,72 @@ public class RingoverHttpClient
     /// <typeparam name="T">The expected response type.</typeparam>
     /// <param name="url">Relative resource path under the Ringover API prefix.</param>
     /// <param name="token">A token to observe while waiting for the task to complete.</param>
-    /// <returns>The deserialized response instance, or <c>null</c> if deserialization fails.</returns>
+    /// <returns>The deserialized response instance, or <c>null</c> if deserialization fails or 204 No Content is returned.</returns>
     public Task<T?> GetAsync<T>(string url, CancellationToken token)
-        => GetAsync<T>(url, (IDictionary<string, string>?)null, token);
+        => GetAsync<T>(url, headers: null, token);
 
     /// <summary>
     /// Issues a GET request to the specified Ringover relative URL and deserializes the JSON response.
     /// Allows supplying request-specific headers (e.g. company id).
     /// </summary>
+    /// <typeparam name="T">The expected response type.</typeparam>
     /// <param name="url">Relative resource path under the Ringover API prefix.</param>
     /// <param name="headers">Dictionary of headers to add only to this request.</param>
     /// <param name="token">Cancellation token.</param>
+    /// <returns>The deserialized response instance, or <c>null</c> if deserialization fails or 204 No Content is returned.</returns>
     public async Task<T?> GetAsync<T>(string url, IDictionary<string, string>? headers, CancellationToken token)
     {
         try
         {
-            var relative = Combine($"/{_settings.Version}", url);
-
-            // Fast path for no headers: use convenience extension
-            if (headers == null || headers.Count == 0)
-            {
-                return await _client.GetFromJsonAsync<T>(relative, _jsonOptions, token).ConfigureAwait(false);
-            }
+            var relative = BuildRelativeUrl(url);
 
             using var request = new HttpRequestMessage(HttpMethod.Get, relative);
 
-            // Add headers only to this request; do not touch DefaultRequestHeaders
-            foreach (var kv in headers)
+            // Add request-specific headers without touching DefaultRequestHeaders
+            if (headers is not null)
             {
-                // TryAddWithoutValidation prevents header validation exceptions for custom names
-                request.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
+                foreach (var (key, value) in headers)
+                {
+                    request.Headers.TryAddWithoutValidation(key, value);
+                }
             }
 
             using var response = await _client.SendAsync(request, token).ConfigureAwait(false);
 
-            // Let non-success throw as before (caller can catch if needed)
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                _logger.LogDebug("Received 204 No Content for {Url}", url);
+
+                return default;
+            }
+
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadFromJsonAsync<T>(_jsonOptions, cancellationToken: token).ConfigureAwait(false);
         }
-        catch (JsonException e)
+        catch (JsonException ex)
         {
-            _logger.LogError(e, "Failed to deserialize response from Ringover API. URL: {Url}", url);
+            _logger.LogError(ex, "Failed to deserialize response from Ringover API. URL: {Url}", url);
 
             return default;
-        }
-        catch (Exception)
-        {
-            throw;
         }
     }
 
     /// <summary>
     /// Convenience overload for endpoints that require a companyId in a header.
-    /// Uses the header name "companyId" by default — change if your API expects a different header.
+    /// Uses the header name "companyId" by default.
     /// </summary>
+    /// <typeparam name="T">The expected response type.</typeparam>
+    /// <param name="url">Relative resource path under the Ringover API prefix.</param>
+    /// <param name="companyId">The company identifier to include in the request header.</param>
+    /// <param name="token">Cancellation token.</param>
+    /// <returns>The deserialized response instance, or <c>null</c> if deserialization fails or 204 No Content is returned.</returns>
     public Task<T?> GetAsync<T>(string url, string? companyId, CancellationToken token)
     {
         if (string.IsNullOrWhiteSpace(companyId))
             return GetAsync<T>(url, token);
 
-        var headers = new Dictionary<string, string>(1)
+        var headers = new Dictionary<string, string>(capacity: 1)
         {
             [KnownHeaderNames.CompanyId] = companyId
         };
@@ -135,17 +140,19 @@ public class RingoverHttpClient
     }
 
     /// <summary>
-    /// Combines a prefix and a path into a single, well-formed URL or file path segment.
+    /// Builds the relative URL by combining the API version prefix with the requested path.
     /// </summary>
-    /// <remarks>If <paramref name="path"/> is null, empty, or consists only of whitespace, the method returns
-    /// <paramref name="prefix"/> unchanged.</remarks>
-    /// <param name="prefix">The prefix to use as the base. This is typically a URL or directory path.</param>
-    /// <param name="path">The path to append to the prefix. Leading and trailing slashes will be normalized.</param>
-    /// <returns>A combined string with the prefix and path, ensuring there is exactly one slash between them.</returns>
-    private static string Combine(string prefix, string path)
+    /// <param name="path">The resource path to append.</param>
+    /// <returns>A well-formed relative URL string.</returns>
+    private string BuildRelativeUrl(string path)
     {
-        if (string.IsNullOrWhiteSpace(path)) return prefix;
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return $"/{_settings.Version}";
+        }
 
-        return $"{prefix.TrimEnd('/')}/{path.TrimStart('/')}";
+        var versionPrefix = $"/{_settings.Version}";
+
+        return $"{versionPrefix.TrimEnd('/')}/{path.TrimStart('/')}";
     }
 }
