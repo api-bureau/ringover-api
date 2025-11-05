@@ -19,18 +19,36 @@ public class DataService
 
     public async Task RunAsync()
     {
-        var startDate = DateTime.Now.AddMinutes(-120);
+        var startDate = DateTime.Now.AddMinutes(-1200);
 
+        await FetchCallsAsync(startDate);
+
+        await FetchUsersAsync();
+
+        await FetchTranscriptsAsync(startDate);
+
+        // Small delay to ensure all logs are flushed before exiting
+        await Task.Delay(100);
+    }
+
+    private async Task FetchCallsAsync(DateTime startDate)
+    {
         var callQuery = new CallQuery(startDate, DateTime.Now);
 
         var result = await _client.Calls.GetAsync(callQuery);
 
         _logger.LogInformation(JsonSerializer.Serialize(result, _indentedJsonOptions));
+    }
 
+    private async Task FetchUsersAsync()
+    {
         var users = await _client.Users.GetAsync(default);
 
         _logger.LogInformation("Users: {users}", JsonSerializer.Serialize(users, _indentedJsonOptions));
+    }
 
+    private async Task FetchTranscriptsAsync(DateTime startDate)
+    {
         var transcriptQuery = new TranscriptQuery(startDate, DateTime.Now);
 
         var transcripts = await _client.Transcripts.GetAsync(transcriptQuery);
@@ -41,7 +59,9 @@ public class DataService
         {
             _logger.LogInformation("Transcript: {example}", transcripts[0].TranscriptionData?.GetSpeechText());
         }
-
-        await Task.Delay(100);
+        else
+        {
+            _logger.LogInformation("No transcripts found in the specified time range.");
+        }
     }
 }
